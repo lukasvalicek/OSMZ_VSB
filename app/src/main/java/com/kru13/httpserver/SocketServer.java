@@ -32,8 +32,23 @@ public class SocketServer extends Thread {
 	}
 	
 	public void run() {
-        try {
+		
+		try {
         	Log.d("SERVER", "Creating Socket");
+			serverSocket = new ServerSocket(port);
+			ClientHandler client = new ClientHandler(serverSocket);
+			client.run();
+			//client.join();
+
+		} catch (IOException e) {
+			if (serverSocket != null && serverSocket.isClosed())
+				Log.d("SERVER", "Normal exit");
+			else {
+				Log.d("SERVER", "Error");
+				e.printStackTrace();
+			}
+		}
+        try {
             serverSocket = new ServerSocket(port);
             bRunning = true;
             while (bRunning) {
