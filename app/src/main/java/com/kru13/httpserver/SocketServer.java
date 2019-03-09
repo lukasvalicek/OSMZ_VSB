@@ -12,15 +12,38 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+
+import static android.content.ContentValues.TAG;
 
 public class SocketServer extends Thread {
 	
 	ServerSocket serverSocket;
+
+	Handler messageHandler;
+	CameraManager cameraManager;
+	Camera cameraInstance;
 	public final int port = 12345;
 	boolean bRunning;
-	
+
+
+	public SocketServer(Handler handler, CameraManager cameraManager, Camera cameraInstance)
+	{
+		this.messageHandler = handler;
+		this.cameraManager = cameraManager;
+		this.cameraInstance = cameraInstance;
+	}
+
+
+
+
 	public void close() {
 		try {
 			serverSocket.close();
@@ -36,7 +59,7 @@ public class SocketServer extends Thread {
 		try {
         	Log.d("SERVER", "Creating Socket");
 			serverSocket = new ServerSocket(port);
-			ClientHandler client = new ClientHandler(serverSocket);
+			ClientHandler client = new ClientHandler(serverSocket, messageHandler, cameraManager, cameraInstance);
 			client.run();
 			//client.join();
 
@@ -48,7 +71,7 @@ public class SocketServer extends Thread {
 				e.printStackTrace();
 			}
 		}
-        try {
+       /* try {
             serverSocket = new ServerSocket(port);
             bRunning = true;
             while (bRunning) {
@@ -101,7 +124,7 @@ public class SocketServer extends Thread {
                 s.close();
                 Log.d("SERVER", "Socket Closed");
             }
-        } 
+        }
         catch (IOException e) {
             if (serverSocket != null && serverSocket.isClosed())
             	Log.d("SERVER", "Normal exit");
@@ -113,7 +136,7 @@ public class SocketServer extends Thread {
         finally {
         	serverSocket = null;
         	bRunning = false;
-        }
+        }*/
     }
 
 }
