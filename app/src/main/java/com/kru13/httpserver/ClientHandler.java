@@ -67,8 +67,9 @@ public class ClientHandler extends Thread {
                     if (reqestType.equals("GET"))
                     {
                         File outFile = null;
-                        if(requestedFile.equalsIgnoreCase("/webcam")){
-                            outFile = new File(makeCameraPhoto());
+                        if(requestedFile.contains("/webcam?")){
+                            makeCameraPhoto();
+                            outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "/photos/camera.jpg");
                         }
                         else {
                             outFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), requestedFile);
@@ -154,38 +155,35 @@ public class ClientHandler extends Thread {
         }
     }
 
-    private String makeCameraPhoto() throws Exception {
+    private void makeCameraPhoto() throws Exception {
         if (cameraManager == null) {
             throw new Exception("NO CAMERA");
         }
 
         takePicture();
-        String photoPath = cameraManager.getLastFile() != null ?
-                cameraManager.getLastFile().getPath() : "/error";
-
-
-        if (photoPath.startsWith("/storage/sdcard/")) {
-            photoPath = photoPath.substring("/storage/sdcard".length());
-        }
-
-        return photoPath;
 
     }
 
     public void takePicture() {
-        if (cameraManager == null) {
-            Log.d("takePictureFromCamera", "no camera hardware found");
-            // todo return info
-            return;
+        try {
+            if (cameraManager == null) {
+                Log.d("takePictureFromCamera", "no camera hardware found");
+                // todo return info
+                return;
+            }
+
+
+            if (cameraInstance == null) {
+                Log.d("takePictureFromCamera", "could not get access to camera");
+                return;
+            }
+
+
+            cameraInstance.takePicture(null, null, this.cameraManager);
         }
-
-
-        if (cameraInstance == null) {
-            Log.d("takePictureFromCamera", "could not get access to camera");
-            return;
+        catch (Exception e) {
+            Log.d("Take picture error: ", e.getLocalizedMessage());
         }
-
-        cameraInstance.takePicture(null, null, this.cameraManager);
 
        /* try {
             // sync time
