@@ -4,6 +4,7 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.View;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 
 
-public class HttpServerActivity extends AppCompatActivity implements OnClickListener{
+public class HttpServerActivity extends AppCompatActivity implements OnClickListener {
 
 	private SocketServer s;
 	private ArrayList<String> Messages;
@@ -29,6 +30,9 @@ public class HttpServerActivity extends AppCompatActivity implements OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		StrictMode.ThreadPolicy policy = new
+				StrictMode.ThreadPolicy.Builder().permitAll().build();
+		StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_http_server);
         Button btn1 = (Button)findViewById(R.id.button1);
         Button btn2 = (Button)findViewById(R.id.button2);
